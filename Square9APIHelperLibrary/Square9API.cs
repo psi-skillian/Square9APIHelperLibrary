@@ -9,7 +9,7 @@ using File = Square9APIHelperLibrary.DataTypes.File;
 
 namespace Square9APIHelperLibrary
 {
-    public class Square9API
+    public class Square9API : IDisposable
     {
         #region Variables
         /// <summary>
@@ -49,10 +49,10 @@ namespace Square9APIHelperLibrary
         /// Checks if the current authenticated user is an Administrator
         /// </summary>
         /// <returns><see cref="bool"/></returns>
-        public async Task<bool> IsAdminAsync()
+        public async Task<bool> IsAdminAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest("api/userAdmin/isAdmin");
-            var Response = await ApiClient.ExecuteAsync<bool>(Request);
+            var Response = await ApiClient.ExecuteAsync<bool>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred: {Response.Content}");
@@ -64,10 +64,10 @@ namespace Square9APIHelperLibrary
         /// <see cref="Default"/>
         /// </summary>
         /// <returns><see cref="string"/></returns>
-        private async Task<string> GetDefaultAsync()
+        private async Task<string> GetDefaultAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest("api/admin/instances/default");
-            var Response = await ApiClient.ExecuteAsync<string>(Request);
+            var Response = await ApiClient.ExecuteAsync<string>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred: {Response.Content}");
@@ -79,10 +79,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<string> GetUsernameAsync()
+        public async Task<string> GetUsernameAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest("api/admin");
-            var Response = await ApiClient.ExecuteAsync<string>(Request);
+            var Response = await ApiClient.ExecuteAsync<string>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred: {Response.Content}");
@@ -96,11 +96,11 @@ namespace Square9APIHelperLibrary
         /// <param name="emailServer"><see cref="EmailServer"/></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<EmailServer> UpdateEmailOptionsAsync(int databaseId, EmailServer emailServer)
+        public async Task<EmailServer> UpdateEmailOptionsAsync(int databaseId, EmailServer emailServer, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/notifications", Method.Put);
             Request.AddJsonBody(emailServer);
-            var Response = await ApiClient.ExecuteAsync<EmailServer>(Request);
+            var Response = await ApiClient.ExecuteAsync<EmailServer>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred while updating email options: {Response.Content}");
@@ -113,10 +113,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <returns><see cref="EmailServer"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<EmailServer> GetEmailOptionsAsync(int databaseId)
+        public async Task<EmailServer> GetEmailOptionsAsync(int databaseId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/notifications");
-            var Response = await ApiClient.ExecuteAsync<EmailServer>(Request);
+            var Response = await ApiClient.ExecuteAsync<EmailServer>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred while retrieving email options: {Response.Content}");
@@ -129,11 +129,11 @@ namespace Square9APIHelperLibrary
         /// <param name="stamp"><see cref="Stamp"/></param>
         /// <returns><see cref="Stamp"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Stamp> CreateStampAsync(Stamp stamp)
+        public async Task<Stamp> CreateStampAsync(Stamp stamp, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/stamps", Method.Post);
             Request.AddJsonBody(stamp);
-            var Response = await ApiClient.ExecuteAsync<Stamp>(Request);
+            var Response = await ApiClient.ExecuteAsync<Stamp>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred creating stamp: {Response.Content}");
@@ -145,10 +145,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="Stamp"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<Stamp>> GetStampsAsync()
+        public async Task<List<Stamp>> GetStampsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/admin/stamps");
-            var Response = await ApiClient.ExecuteAsync<List<Stamp>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<Stamp>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred while retrieving stamps: {Response.Content}");
@@ -160,10 +160,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="stamp"><see cref="Stamp"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteStampAsync(Stamp stamp)
+        public async Task DeleteStampAsync(Stamp stamp, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/stamps/{stamp.Id}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred deleting stamp: {Response.Content}");
@@ -174,10 +174,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="Registration"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Registration> GetRegistrationAsync()
+        public async Task<Registration> GetRegistrationAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/admin/registration");
-            var Response = await ApiClient.ExecuteAsync<Registration>(Request);
+            var Response = await ApiClient.ExecuteAsync<Registration>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred while retrieving registration: {Response.Content}");
@@ -198,12 +198,12 @@ namespace Square9APIHelperLibrary
         /// <param name="uniqueId"></param>
         /// <param name="serial"></param>
         /// <exception cref="Exception"></exception>
-        public async Task RequestWebRegistrationAsync(string uniqueId, string serial)
+        public async Task RequestWebRegistrationAsync(string uniqueId, string serial, System.Threading.CancellationToken cancellationToken = default)
         {
             Register register = new Register(uniqueId, serial);
             var Request = new RestRequest($"api/admin/registration", Method.Post);
             Request.AddJsonBody(register);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred while requesting web registration: {Response.Content}");
@@ -216,12 +216,12 @@ namespace Square9APIHelperLibrary
         /// <param name="serial"></param>
         /// <param name="registration"></param>
         /// <exception cref="Exception"></exception>
-        public async Task ManualRegistrationAsync(string uniqueId, string serial, string registration)
+        public async Task ManualRegistrationAsync(string uniqueId, string serial, string registration, System.Threading.CancellationToken cancellationToken = default)
         {
             Register register = new Register(uniqueId, serial, registration);
             var Request = new RestRequest($"api/admin/registration", Method.Put);
             Request.AddJsonBody(register);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"An error occurred while performing manual registration: {Response.Content}");
@@ -234,10 +234,10 @@ namespace Square9APIHelperLibrary
         /// Requests a license from the server
         /// </summary>
         /// <returns><see cref="License"/></returns>
-        public async Task<License> CreateLicenseAsync()
+        public async Task<License> CreateLicenseAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest("api/licenses");
-            var Response = await ApiClient.ExecuteAsync<License>(Request);
+            var Response = await ApiClient.ExecuteAsync<License>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 if (Response.StatusCode == HttpStatusCode.Unauthorized)
@@ -266,20 +266,20 @@ namespace Square9APIHelperLibrary
                 }
             }
             License = Response.Data;
-            Default = await GetDefaultAsync();
+            Default = await GetDefaultAsync(cancellationToken);
             return Response.Data;
         }
         /// <summary>
         /// Requests for a license to be deleted from the server
         /// </summary>
         /// <param name="license">Must be a active license</param>
-        public async Task DeleteLicenseAsync(License license = null)
+        public async Task DeleteLicenseAsync(License license = null, System.Threading.CancellationToken cancellationToken = default)
         {
             if (license != null || License != null)
             {
                 string token = (license != null) ? license.Token : License.Token;
                 var Request = new RestRequest($"api/licenses/{token}");
-                var Response = await ApiClient.ExecuteAsync(Request);
+                var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
                 if (Response.StatusCode != HttpStatusCode.OK)
                 {
                     throw new Exception($"Unable to release license token: {Response.Content}");
@@ -292,10 +292,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<License>> GetLicensesAsync()
+        public async Task<List<License>> GetLicensesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/LicenseManager");
-            var Response = await ApiClient.ExecuteAsync<List<License>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<License>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get licenses: {Response.Content}");
@@ -308,10 +308,10 @@ namespace Square9APIHelperLibrary
         /// <param name="license"><see cref="License"/></param>
         /// <param name="forceLogout">When true will delete license token from the server, forcing user to log back in</param>
         /// <exception cref="Exception"></exception>
-        public async Task ReleaseLicenseAsync(License license, bool forceLogout = false)
+        public async Task ReleaseLicenseAsync(License license, bool forceLogout = false, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/LicenseManager?userToken={license.Token}&forceLogout={forceLogout}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to release license: {Response.Content}");
@@ -322,10 +322,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="forceLogout">When true will delete license token from the server, forcing user to log back in</param>
         /// <exception cref="Exception"></exception>
-        public async Task ReleaseAllLicensesAsync(bool forceLogout = false)
+        public async Task ReleaseAllLicensesAsync(bool forceLogout = false, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/LicenseManager?All=true&forceLogout={forceLogout}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to release licenses: {Response.Content}");
@@ -339,10 +339,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseId">Optional: The ID of the database you would like to return in the list</param>
         /// <returns><see cref="DatabaseList"/></returns>
-        public async Task<DatabaseList> GetDatabasesAsync(int databaseId = 0)
+        public async Task<DatabaseList> GetDatabasesAsync(int databaseId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (databaseId >= 1) ? new RestRequest($"api/dbs/{databaseId}") : new RestRequest("api/dbs");
-            var Response = await ApiClient.ExecuteAsync<DatabaseList>(Request);
+            var Response = await ApiClient.ExecuteAsync<DatabaseList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get databases: {Response.Content}");
@@ -354,10 +354,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseId">Optional: The ID of the database you would like to return in the list</param>
         /// <returns>List of <see cref="AdminDatabase"/></returns>
-        public async Task<List<AdminDatabase>> GetAdminDatabasesAsync(int databaseId = 0)
+        public async Task<List<AdminDatabase>> GetAdminDatabasesAsync(int databaseId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (databaseId >= 1) ? new RestRequest($"api/admin/databases/{databaseId}") : new RestRequest("api/admin/databases");
-            var Response = await ApiClient.ExecuteAsync<List<AdminDatabase>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminDatabase>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get databases: {Response.Content}");
@@ -369,12 +369,12 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="database">The new database to be created on the server <see cref="NewAdminDatabase"/></param>
         /// <returns><see cref="AdminDatabase"/></returns>
-        public async Task<AdminDatabase> CreateDatabaseAsync(AdminDatabase database)
+        public async Task<AdminDatabase> CreateDatabaseAsync(AdminDatabase database, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases", Method.Post);
             if (database.Server == null) { database.Server = Default; }
             Request.AddJsonBody(database);
-            var Response = await ApiClient.ExecuteAsync<AdminDatabase>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminDatabase>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create database: {Response.Content}");
@@ -386,12 +386,12 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="database">The existing database to be updates on the server <see cref="AdminDatabase"/></param>
         /// <returns><see cref="AdminDatabase"/></returns>
-        public async Task<AdminDatabase> UpdateDatabaseAsync(AdminDatabase database)
+        public async Task<AdminDatabase> UpdateDatabaseAsync(AdminDatabase database, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{database.Id}", Method.Put);
             if (database.Server == null) { database.Server = Default; }
             Request.AddJsonBody(database);
-            var Response = await ApiClient.ExecuteAsync<AdminDatabase>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminDatabase>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update database: {Response.Content}");
@@ -403,10 +403,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseId">The ID of the database to be deleted <see cref="Database.Id"/></param>
         /// <param name="drop">Optional: Determines if the database should be dropped from SQL, set to false by default</param>
-        public async Task DeleteDatabaseAsync(int databaseId, bool drop = false)
+        public async Task DeleteDatabaseAsync(int databaseId, bool drop = false, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}?Drop={drop}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to delete database: {Response.Content}");
@@ -416,10 +416,10 @@ namespace Square9APIHelperLibrary
         /// Requests a SQL index rebuild on all tables withing the passed database
         /// </summary>
         /// <param name="databaseId">The ID of the database to be rebuilt <see cref="Database.Id"/></param>
-        public async Task RebuildDatabaseIndexAsync(int databaseId)
+        public async Task RebuildDatabaseIndexAsync(int databaseId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}?rebuild=true");
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to rebuild database index: {Response.Content}");
@@ -434,10 +434,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">The ID of the database you would like to return a list of archives from</param>
         /// <param name="archiveId">Optional: The ID of the archive you would like to return a list of archives from</param>
         /// <returns><see cref="ArchiveList"/></returns>
-        public async Task<ArchiveList> GetArchivesAsync(int databaseId, int archiveId = 0)
+        public async Task<ArchiveList> GetArchivesAsync(int databaseId, int archiveId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (archiveId >= 1) ? new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}") : new RestRequest($"api/dbs/{databaseId}/archives");
-            var Response = await ApiClient.ExecuteAsync<ArchiveList>(Request);
+            var Response = await ApiClient.ExecuteAsync<ArchiveList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get archives: {Response.Content}");
@@ -450,10 +450,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">The ID of the database you would like to return a list of archives from</param>
         /// <param name="archiveId">Optional: The ID of the archive you would like to return a list of archvies from</param>
         /// <returns>List of <see cref="AdminArchive"/></returns>
-        public async Task<List<AdminArchive>> GetAdminArchivesAsync(int databaseId, int archiveId = 0)
+        public async Task<List<AdminArchive>> GetAdminArchivesAsync(int databaseId, int archiveId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (archiveId >= 1) ? new RestRequest($"api/admin/databases/{databaseId}/archives/{archiveId}") : new RestRequest($"api/admin/databases/{databaseId}/archives");
-            var Response = await ApiClient.ExecuteAsync<List<AdminArchive>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminArchive>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get archives: {Response.Content}");
@@ -466,10 +466,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">The ID of the database the archive is in</param>
         /// <param name="archiveId">The ID of the archive to return fields from</param>
         /// <returns>List of <see cref="Field"/></returns>
-        public async Task<List<Field>> GetArchiveFieldsAsync(int databaseId, int archiveId)
+        public async Task<List<Field>> GetArchiveFieldsAsync(int databaseId, int archiveId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}?type=fields");
-            var Response = await ApiClient.ExecuteAsync<List<Field>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<Field>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get archive fields: {Response.Content}");
@@ -482,11 +482,11 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">The database id where the archive should be created</param>
         /// <param name="archive">The archive to be created</param>
         /// <returns><see cref="AdminArchive"/></returns>
-        public async Task<AdminArchive> CreateArchiveAsync(int databaseId, NewAdminArchive archive)
+        public async Task<AdminArchive> CreateArchiveAsync(int databaseId, NewAdminArchive archive, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/archives", Method.Post);
             Request.AddJsonBody(archive);
-            var Response = await ApiClient.ExecuteAsync<AdminArchive>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminArchive>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create archive: {Response.Content} \n {JsonConvert.SerializeObject(archive)}");
@@ -498,10 +498,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseId">Database ID that relates to the archive</param>
         /// <param name="archiveId">Archive ID of the archive to be deleted</param>
-        public async Task DeleteArchiveAsync(int databaseId, int archiveId)
+        public async Task DeleteArchiveAsync(int databaseId, int archiveId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/archives/{archiveId}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to delete archive: {Response.Content}");
@@ -513,11 +513,11 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID that relates to the archive</param>
         /// <param name="archive">Archive to be updated</param>
         /// <returns></returns>
-        public async Task<AdminArchive> UpdateArchiveAsync(int databaseId, AdminArchive archive)
+        public async Task<AdminArchive> UpdateArchiveAsync(int databaseId, AdminArchive archive, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/archives/{archive.Id}", Method.Put);
             Request.AddJsonBody(archive);
-            var Response = await ApiClient.ExecuteAsync<AdminArchive>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminArchive>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update archive: {Response.Content} \n {JsonConvert.SerializeObject(archive)}");
@@ -529,10 +529,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseId">ID of the database to request options from</param>
         /// <returns><see cref="GlobalArchiveOptions"/></returns>
-        public async Task<GlobalArchiveOptions> GetGlobalArchiveOptionsAsync(int databaseId)
+        public async Task<GlobalArchiveOptions> GetGlobalArchiveOptionsAsync(int databaseId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/options/archives");
-            var Response = await ApiClient.ExecuteAsync<GlobalArchiveOptions>(Request);
+            var Response = await ApiClient.ExecuteAsync<GlobalArchiveOptions>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get GlobalArchiveOptions: {Response.Content}");
@@ -545,11 +545,11 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">ID of the database to update options on</param>
         /// <param name="globalArchiveOptions">Options object to update</param>
         /// <returns><see cref="GlobalArchiveOptions"/></returns>
-        public async Task<GlobalArchiveOptions> UpdateGlobalArchiveOptionsAsync(int databaseId, GlobalArchiveOptions globalArchiveOptions)
+        public async Task<GlobalArchiveOptions> UpdateGlobalArchiveOptionsAsync(int databaseId, GlobalArchiveOptions globalArchiveOptions, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/options/archives", Method.Put);
             Request.AddJsonBody(globalArchiveOptions);
-            var Response = await ApiClient.ExecuteAsync<GlobalArchiveOptions>(Request);
+            var Response = await ApiClient.ExecuteAsync<GlobalArchiveOptions>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update GlobalArchiveOptions: {Response.Content}");
@@ -563,10 +563,10 @@ namespace Square9APIHelperLibrary
         /// <param name="archiveId">Archive ID</param>
         /// <param name="count">Number of most recent documents to index</param>
         /// <returns><see cref="bool"/></returns>
-        public async Task<bool> RebuildArchiveContentIndexAsync(int databaseId, int archiveId, int count = 1000)
+        public async Task<bool> RebuildArchiveContentIndexAsync(int databaseId, int archiveId, int count = 1000, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/archives/{archiveId}/indexrebuild?docCount={count}");
-            var Response = await ApiClient.ExecuteAsync<bool>(Request);
+            var Response = await ApiClient.ExecuteAsync<bool>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to rebuild archive content index: {Response.Content}");
@@ -584,10 +584,10 @@ namespace Square9APIHelperLibrary
         /// <param name="archiveId">Optional: Archive ID</param>
         /// <param name="searchId">Optional: Search ID</param>
         /// <returns><see cref="Search"/></returns>
-        public async Task<List<Search>> GetSearchesAsync(int databaseId, int archiveId = 0, int searchId = 0)
+        public async Task<List<Search>> GetSearchesAsync(int databaseId, int archiveId = 0, int searchId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (searchId >= 1) ? new RestRequest($"api/dbs/{databaseId}/searches/{searchId}") : (archiveId >= 1) ? new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/searches") : new RestRequest($"api/dbs/{databaseId}/searches");
-            var Response = await ApiClient.ExecuteAsync<List<Search>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<Search>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get searches: {Response.Content}");
@@ -605,7 +605,7 @@ namespace Square9APIHelperLibrary
         /// <param name="sort">Optional: Sorts results based on desired column</param>
         /// <param name="time">Optional: Epoch time stamp</param>
         /// <returns><see cref="Result"/></returns>
-        public async Task<Result> GetSearchResultsAsync(int databaseId, Search search, int page = 0, int recordsPerPage = 0, int tabId = 0, int sort = 0, int time = 0)
+        public async Task<Result> GetSearchResultsAsync(int databaseId, Search search, int page = 0, int recordsPerPage = 0, int tabId = 0, int sort = 0, int time = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             //Format Search Criteria
             List<string> searchCriteria = new List<string>();
@@ -622,7 +622,7 @@ namespace Square9APIHelperLibrary
             string sortParam = (sort >= 1) ? $"&Sort={sort}" : "";
             string timeParam = (time >= 1) ? $"&time={time}" : "";
             var Request = new RestRequest($"api/dbs/{databaseId}/searches/{search.Id}/archive/{search.Parent}/documents?SecureId={search.Hash}&SearchCriteria={{{string.Join(",", searchCriteria)}}}{pageParam}{recordsPerPageParam}{tabIdParam}{sortParam}{timeParam}&Count=false");
-            var Response = await ApiClient.ExecuteAsync<Result>(Request);
+            var Response = await ApiClient.ExecuteAsync<Result>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get search results: {Response.Content}");
@@ -640,7 +640,7 @@ namespace Square9APIHelperLibrary
         /// <param name="sort">Optional: Sorts results based on desired column</param>
         /// <param name="time">Optional: Epoch time stamp</param>
         /// <returns><see cref="ArchiveCount"/></returns>
-        public async Task<ArchiveCount> GetSearchCountAsync(int databaseId, Search search, int page = 0, int recordsPerPage = 0, int tabId = 0, int sort = 0, int time = 0)
+        public async Task<ArchiveCount> GetSearchCountAsync(int databaseId, Search search, int page = 0, int recordsPerPage = 0, int tabId = 0, int sort = 0, int time = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             //Format Search Criteria
             List<string> searchCriteria = new List<string>();
@@ -657,7 +657,7 @@ namespace Square9APIHelperLibrary
             string sortParam = (sort >= 1) ? $"&Sort={sort}" : "";
             string timeParam = (time >= 1) ? $"&time={time}" : "";
             var Request = new RestRequest($"api/dbs/{databaseId}/searches/{search.Id}/archive/{search.Parent}/documents?SecureId={search.Hash}&SearchCriteria={{{string.Join(",", searchCriteria)}}}{pageParam}{recordsPerPageParam}{tabIdParam}{sortParam}{timeParam}&Count=true");
-            var Response = await ApiClient.ExecuteAsync<ArchiveCount>(Request);
+            var Response = await ApiClient.ExecuteAsync<ArchiveCount>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get search count: {Response.Content}");
@@ -670,11 +670,11 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">The database id where the search should be created</param>
         /// <param name="search">The search to be created</param>
         /// <returns><see cref="AdminSearch"/></returns>
-        public async Task<AdminSearch> CreateSearchAsync(int databaseId, NewAdminSearch search)
+        public async Task<AdminSearch> CreateSearchAsync(int databaseId, NewAdminSearch search, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/searches", Method.Post);
             Request.AddJsonBody(search);
-            var Response = await ApiClient.ExecuteAsync<AdminSearch>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminSearch>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create search: {Response.Content} \n {JsonConvert.SerializeObject(search)}");
@@ -686,10 +686,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseId">Database ID that relates to the search</param>
         /// <param name="searchId">Search ID of the search to be deleted</param>
-        public async Task DeleteSearchAsync(int databaseId, int searchId)
+        public async Task DeleteSearchAsync(int databaseId, int searchId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/searches/{searchId}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to delete search: {Response.Content}");
@@ -701,11 +701,11 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID that relates to the archive</param>
         /// <param name="search">Archive to be updated</param>
         /// <returns></returns>
-        public async Task<AdminSearch> UpdateSearchAsync(int databaseId, AdminSearch search)
+        public async Task<AdminSearch> UpdateSearchAsync(int databaseId, AdminSearch search, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/searches/{search.Id}", Method.Put);
             Request.AddJsonBody(search);
-            var Response = await ApiClient.ExecuteAsync<AdminSearch>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminSearch>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update search: {Response.Content} \n {JsonConvert.SerializeObject(search)}");
@@ -719,10 +719,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <param name="searchId">Optional: Search ID</param>
         /// <returns><see cref="AdminSearch"/></returns>
-        public async Task<List<AdminSearch>> GetAdminSearchesAsync(int databaseId, int searchId = 0)
+        public async Task<List<AdminSearch>> GetAdminSearchesAsync(int databaseId, int searchId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (searchId >= 1) ? new RestRequest($"api/admin/databases/{databaseId}/searches/{searchId}") : new RestRequest($"api/admin/databases/{databaseId}/searches");
-            var Response = await ApiClient.ExecuteAsync<List<AdminSearch>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminSearch>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get searches: {Response.Content}");
@@ -737,10 +737,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="Inbox"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<InboxList> GetInboxesAsync()
+        public async Task<InboxList> GetInboxesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/inboxes");
-            var Response = await ApiClient.ExecuteAsync<InboxList>(Request);
+            var Response = await ApiClient.ExecuteAsync<InboxList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get inboxes: {Response.Content}");
@@ -753,10 +753,10 @@ namespace Square9APIHelperLibrary
         /// <param name="inboxId">The ID of the desired inbox</param>
         /// <returns><see cref="Inbox"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Inbox> GetInboxAsync(int inboxId)
+        public async Task<Inbox> GetInboxAsync(int inboxId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/inboxes/{inboxId}");
-            var Response = await ApiClient.ExecuteAsync<Inbox>(Request);
+            var Response = await ApiClient.ExecuteAsync<Inbox>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get inbox: {Response.Content}");
@@ -768,10 +768,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="AdminInbox"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<AdminInbox>> GetAdminInboxesAsync()
+        public async Task<List<AdminInbox>> GetAdminInboxesAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/admin/inboxes");
-            var Response = await ApiClient.ExecuteAsync<List<AdminInbox>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminInbox>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get admin inbox: {Response.Content}");
@@ -784,10 +784,10 @@ namespace Square9APIHelperLibrary
         /// <param name="inboxId">The ID of the desired Inbox</param>
         /// <returns><see cref="Security"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<Security>> GetAdminInboxSecurityAsync(int inboxId)
+        public async Task<List<Security>> GetAdminInboxSecurityAsync(int inboxId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/inboxes/{inboxId}");
-            var Response = await ApiClient.ExecuteAsync<List<Security>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<Security>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get admin inbox security: {Response.Content}");
@@ -799,10 +799,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="GlobalInboxOptions"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<GlobalInboxOptions> GetGlobalInboxOptionsAsync()
+        public async Task<GlobalInboxOptions> GetGlobalInboxOptionsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/admin/options/inboxes");
-            var Response = await ApiClient.ExecuteAsync<GlobalInboxOptions>(Request);
+            var Response = await ApiClient.ExecuteAsync<GlobalInboxOptions>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get global inbox options: {Response.Content}");
@@ -815,11 +815,11 @@ namespace Square9APIHelperLibrary
         /// <param name="option">The modified <see cref="GlobalInboxOptions"/></param>
         /// <returns><see cref="GlobalInboxOptions"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<GlobalInboxOptions> UpdateGlobalInboxOptionsAsync(GlobalInboxOptions option)
+        public async Task<GlobalInboxOptions> UpdateGlobalInboxOptionsAsync(GlobalInboxOptions option, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/options/inboxes", Method.Put);
             Request.AddJsonBody(option);
-            var Response = await ApiClient.ExecuteAsync<GlobalInboxOptions>(Request);
+            var Response = await ApiClient.ExecuteAsync<GlobalInboxOptions>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update Global Inbox Options: {Response.Content}");
@@ -832,11 +832,11 @@ namespace Square9APIHelperLibrary
         /// <param name="inbox">The new <see cref="NewAdminInbox"/></param>
         /// <returns><see cref="AdminInbox"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminInbox> CreateInboxAsync(NewAdminInbox inbox)
+        public async Task<AdminInbox> CreateInboxAsync(NewAdminInbox inbox, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/inboxes", Method.Post);
             Request.AddJsonBody(inbox);
-            var Response = await ApiClient.ExecuteAsync<AdminInbox>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminInbox>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create inbox: {Response.Content}");
@@ -848,10 +848,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="inboxId">The Id of the desired Inbox</param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteInboxAsync(int inboxId)
+        public async Task DeleteInboxAsync(int inboxId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/inboxes/{inboxId}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to delete inbox: {Response.Content}");
@@ -867,10 +867,10 @@ namespace Square9APIHelperLibrary
         /// <param name="fieldId">Optional: Field ID to return</param>
         /// <returns><see cref="AdminField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<AdminField>> GetFieldsAsync(int databaseId, int fieldId = 0)
+        public async Task<List<AdminField>> GetFieldsAsync(int databaseId, int fieldId = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = (fieldId >= 1) ? new RestRequest($"api/admin/databases/{databaseId}/fields/{fieldId}") : new RestRequest($"api/admin/databases/{databaseId}/fields");
-            var Response = await ApiClient.ExecuteAsync<List<AdminField>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminField>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get fields: {Response.Content}");
@@ -884,11 +884,11 @@ namespace Square9APIHelperLibrary
         /// <param name="field">New Field to be created</param>
         /// <returns><see cref="AdminField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminField> CreateFieldAsync(int databaseId, NewAdminField field)
+        public async Task<AdminField> CreateFieldAsync(int databaseId, NewAdminField field, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/fields", Method.Post);
             Request.AddJsonBody(field);
-            var Response = await ApiClient.ExecuteAsync<AdminField>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminField>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create field: {Response.Content}");
@@ -902,11 +902,11 @@ namespace Square9APIHelperLibrary
         /// <param name="field">Field to be updated</param>
         /// <returns><see cref="AdminField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminField> UpdateFieldAsync(int databaseId, AdminField field)
+        public async Task<AdminField> UpdateFieldAsync(int databaseId, AdminField field, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/fields/{field.Id}", Method.Put);
             Request.AddJsonBody(field);
-            var Response = await ApiClient.ExecuteAsync<AdminField>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminField>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update field: {Response.Content}");
@@ -919,10 +919,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <param name="fieldId">Field ID</param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteFieldAsync(int databaseId, int fieldId)
+        public async Task DeleteFieldAsync(int databaseId, int fieldId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/fields/{fieldId}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable delete field: {Response.Content}");
@@ -935,10 +935,10 @@ namespace Square9APIHelperLibrary
         /// <param name="fieldId">Table Field ID</param>
         /// <returns><see cref="AdminTableField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminTableField> GetTableFieldAsync(int databaseId, int fieldId)
+        public async Task<AdminTableField> GetTableFieldAsync(int databaseId, int fieldId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/tablefields/{fieldId}");
-            var Response = await ApiClient.ExecuteAsync<AdminTableField>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminTableField>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get table field: {Response.Content}");
@@ -951,10 +951,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <returns><see cref="AdminTableField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<AdminTableField>> GetTableFieldsAsync(int databaseId)
+        public async Task<List<AdminTableField>> GetTableFieldsAsync(int databaseId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/tablefields");
-            var Response = await ApiClient.ExecuteAsync<List<AdminTableField>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminTableField>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get table fields: {Response.Content}");
@@ -968,11 +968,11 @@ namespace Square9APIHelperLibrary
         /// <param name="field">Field ID</param>
         /// <returns><see cref="AdminTableField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminTableField> CreateTableFieldAsync(int databaseId, NewAdminTableField field)
+        public async Task<AdminTableField> CreateTableFieldAsync(int databaseId, NewAdminTableField field, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/tablefields", Method.Post);
             Request.AddJsonBody(field);
-            var Response = await ApiClient.ExecuteAsync<AdminTableField>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminTableField>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create table field: {Response.Content}");
@@ -986,11 +986,11 @@ namespace Square9APIHelperLibrary
         /// <param name="field">Field ID</param>
         /// <returns><see cref="AdminTableField"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminTableField> UpdateTableFieldAsync(int databaseId, AdminTableField field)
+        public async Task<AdminTableField> UpdateTableFieldAsync(int databaseId, AdminTableField field, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/tablefields/{field.Id}", Method.Put);
             Request.AddJsonBody(field);
-            var Response = await ApiClient.ExecuteAsync<AdminTableField>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminTableField>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update table field: {Response.Content}");
@@ -1003,10 +1003,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <param name="fieldId">Field ID</param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteTableFieldAsync(int databaseId, int fieldId)
+        public async Task DeleteTableFieldAsync(int databaseId, int fieldId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/tablefields/{fieldId}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable delete table field: {Response.Content}");
@@ -1019,10 +1019,10 @@ namespace Square9APIHelperLibrary
         /// <param name="listId">Field ID</param>
         /// <returns><see cref="AdminList"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminList> GetListAsync(int databaseId, int listId)
+        public async Task<AdminList> GetListAsync(int databaseId, int listId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/lists/{listId}");
-            var Response = await ApiClient.ExecuteAsync<AdminList>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get list: {Response.Content}");
@@ -1035,10 +1035,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <returns><see cref="AdminList"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<AdminList>> GetListsAsync(int databaseId)
+        public async Task<List<AdminList>> GetListsAsync(int databaseId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/lists");
-            var Response = await ApiClient.ExecuteAsync<List<AdminList>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<AdminList>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get lists: {Response.Content}");
@@ -1052,11 +1052,11 @@ namespace Square9APIHelperLibrary
         /// <param name="list">The new <see cref="AdminList"/></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminList> CreateListAsync(int databaseId, NewAdminList list)
+        public async Task<AdminList> CreateListAsync(int databaseId, NewAdminList list, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/lists", Method.Post);
             Request.AddJsonBody(list);
-            var Response = await ApiClient.ExecuteAsync<AdminList>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create list: {Response.Content}");
@@ -1070,11 +1070,11 @@ namespace Square9APIHelperLibrary
         /// <param name="list">List object to update</param>
         /// <returns><see cref="AdminList"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminList> UpdateListAsync(int databaseId, AdminList list)
+        public async Task<AdminList> UpdateListAsync(int databaseId, AdminList list, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/lists/{list.Id}", Method.Put);
             Request.AddJsonBody(list);
-            var Response = await ApiClient.ExecuteAsync<AdminList>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update list: {Response.Content}");
@@ -1087,10 +1087,10 @@ namespace Square9APIHelperLibrary
         /// <param name="databaseId">Database ID</param>
         /// <param name="listId">List ID to be deleted</param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteListAsync(int databaseId, int listId)
+        public async Task DeleteListAsync(int databaseId, int listId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/lists/{listId}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable delete list: {Response.Content}");
@@ -1103,11 +1103,11 @@ namespace Square9APIHelperLibrary
         /// <param name="list"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<AdminList> LoadAssemblyListAsync(int databaseId, AdminList list)
+        public async Task<AdminList> LoadAssemblyListAsync(int databaseId, AdminList list, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/admin/databases/{databaseId}/lists", Method.Put);
             Request.AddJsonBody(list);
-            var Response = await ApiClient.ExecuteAsync<AdminList>(Request);
+            var Response = await ApiClient.ExecuteAsync<AdminList>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get assembly list: {Response.Content}");
@@ -1124,10 +1124,10 @@ namespace Square9APIHelperLibrary
         /// <param name="archiveId">ArchiveID</param>
         /// <param name="documentId">Document ID</param>
         /// <exception cref="Exception"></exception>
-        public async Task<Result> GetArchiveDocumentAsync(int databaseId, int archiveId, int documentId)
+        public async Task<Result> GetArchiveDocumentAsync(int databaseId, int archiveId, int documentId, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}?DocumentID={documentId}&Token={License.Token}");
-            var SecureIDResponse = await ApiClient.ExecuteAsync(Request);
+            var SecureIDResponse = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (SecureIDResponse.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get document Secure ID: {SecureIDResponse.Content}");
@@ -1150,10 +1150,10 @@ namespace Square9APIHelperLibrary
         /// <param name="document"><see cref="Doc"/></param>
         /// <returns>Returns the same <see cref="Result"/> that <see cref="GetSearchResults(int, Search, int, int, int, int, int)"/> would return</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Result> GetArchiveDocumentMetaDataAsync(int databaseId, int archiveId, Doc document)
+        public async Task<Result> GetArchiveDocumentMetaDataAsync(int databaseId, int archiveId, Doc document, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}?SecureId={document.Hash}");
-            var Response = await ApiClient.ExecuteAsync<Result>(Request);
+            var Response = await ApiClient.ExecuteAsync<Result>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get document Meta Data: {Response.Content}");
@@ -1167,10 +1167,10 @@ namespace Square9APIHelperLibrary
         /// <param name="fileName">The original filename of the file to return details on</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<DocDetails> GetInboxDocumentDetailsAsync(int inboxId, File file)
+        public async Task<DocDetails> GetInboxDocumentDetailsAsync(int inboxId, File file, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/inboxes?FilePath={file.FileName}{file.FileType}&Id={inboxId}");
-            var Response = await ApiClient.ExecuteAsync<DocDetails>(Request);
+            var Response = await ApiClient.ExecuteAsync<DocDetails>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get document Details: {Response.Content}");
@@ -1186,11 +1186,12 @@ namespace Square9APIHelperLibrary
         /// <param name="savePath">Optional: Local path to save the documents file to</param>
         /// <returns>A <see cref="string"/> of the downloaded files filepath</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<string> GetArchiveDocumentFileAsync(int databaseId, int archiveId, Doc document, string savePath = "")
+        public async Task<string> GetArchiveDocumentFileAsync(int databaseId, int archiveId, Doc document, string savePath = "", System.Threading.CancellationToken cancellationToken = default)
         {
             var fileName = (savePath == "") ? $"{System.IO.Path.GetTempPath()}{Guid.NewGuid().ToString()}{document.FileType}" : $"{savePath}{document.Id}{document.FileType}";
             var writer = System.IO.File.OpenWrite(fileName);
-            var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}/file?SecureId={document.Hash}") {
+            var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}/file?SecureId={document.Hash}")
+            {
                 ResponseWriter = responseStream => {
                     using (responseStream)
                     {
@@ -1199,7 +1200,7 @@ namespace Square9APIHelperLibrary
                     return responseStream;
                 }
             };
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to download file: {Response.Content}");
@@ -1214,11 +1215,12 @@ namespace Square9APIHelperLibrary
         /// <param name="savePath">Optional: Local path to save file</param>
         /// <returns>A <see cref="string"/> containing the local files path</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<string> GetInboxDocumentFileAsync(int inboxId, File file, string savePath = "")
+        public async Task<string> GetInboxDocumentFileAsync(int inboxId, File file, string savePath = "", System.Threading.CancellationToken cancellationToken = default)
         {
             var fileName = (savePath == "") ? $"{System.IO.Path.GetTempPath()}{Guid.NewGuid().ToString()}{file.FileType}" : $"{savePath}{file.FileName}{file.FileType}";
             var writer = System.IO.File.OpenWrite(fileName);
-            var Request = new RestRequest($"api/inboxes/{inboxId}?FileName={file.FileName}{file.FileType}") {
+            var Request = new RestRequest($"api/inboxes/{inboxId}?FileName={file.FileName}{file.FileType}")
+            {
                 ResponseWriter = responseStream =>
                 {
                     using (responseStream)
@@ -1228,7 +1230,7 @@ namespace Square9APIHelperLibrary
                     return responseStream;
                 }
             };
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to download file: {Response.Content}");
@@ -1246,7 +1248,7 @@ namespace Square9APIHelperLibrary
         /// <param name="width"><see cref="int"/> width in pixels the thumbnail should be downloaded in</param>
         /// <returns>a <see cref="string"/> containing the local file path of the downloaded thumbnail</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<string> GetArchiveDocumentThumbnailAsync(int databaseId, int archiveId, Doc document, string savePath = "", int height = 0, int width = 0)
+        public async Task<string> GetArchiveDocumentThumbnailAsync(int databaseId, int archiveId, Doc document, string savePath = "", int height = 0, int width = 0, System.Threading.CancellationToken cancellationToken = default)
         {
             var fileName = (savePath == "") ? $"{System.IO.Path.GetTempPath()}{Guid.NewGuid().ToString()}.jpg" : $"{savePath}{document.Id}.jpg";
             var writer = System.IO.File.OpenWrite(fileName);
@@ -1261,7 +1263,7 @@ namespace Square9APIHelperLibrary
                     return responseStream;
                 }
             };
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to download thumbnail: {Response.Content}");
@@ -1276,13 +1278,13 @@ namespace Square9APIHelperLibrary
         /// <param name="document">Document to update on the server</param>
         /// <returns><see cref="Doc"/> *Document object returned is the same one passed to the method, the server returns nothing*</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Doc> UpdateDocumentIndexDataAsync(int databaseId, int archiveId, Doc document)
+        public async Task<Doc> UpdateDocumentIndexDataAsync(int databaseId, int archiveId, Doc document, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}/save?SecureId={document.Hash}", Method.Post);
             DocumentIndexData IndexData = new DocumentIndexData();
             IndexData.IndexData.IndexFields = document.Fields;
             Request.AddJsonBody(IndexData);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update document index data: {Response.Content}");
@@ -1295,11 +1297,11 @@ namespace Square9APIHelperLibrary
         /// <param name="fileName">The full local path of the file to be uploaded</param>
         /// <returns><see cref="UploadedFiles"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<UploadedFiles> UploadDocumentAsync(string fileName)
+        public async Task<UploadedFiles> UploadDocumentAsync(string fileName, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/files", Method.Post);
             Request.AddFile("File", fileName);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to upload file: {Response.Content}");
@@ -1313,11 +1315,11 @@ namespace Square9APIHelperLibrary
         /// <param name="archiveId"><see cref="Archive.Id"/></param>
         /// <param name="newFile"><see cref="NewFile"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task ImportArchiveDocumentAsync(int databaseId, int archiveId, NewFile newFile, bool useViewerCache = false)
+        public async Task ImportArchiveDocumentAsync(int databaseId, int archiveId, NewFile newFile, bool useViewerCache = false, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest((!useViewerCache) ? $"api/dbs/{databaseId}/archives/{archiveId}" : $"api/dbs/{databaseId}/archives/{archiveId}?useViewerCache=true", Method.Post);
             Request.AddJsonBody(newFile);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to index document: {Response.Content}");
@@ -1329,10 +1331,10 @@ namespace Square9APIHelperLibrary
         /// <param name="inboxId">ID of the inbox to import the file to</param>
         /// <param name="file"><see cref="FileDetails"/> Returned by <see cref="UploadDocument(string)"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task ImportInboxDocumentAsync(int inboxId, FileDetails file)
+        public async Task ImportInboxDocumentAsync(int inboxId, FileDetails file, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/inboxes/{inboxId}?FilePath={file.Name}&newFileName={file.OriginalName}", Method.Post);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to import document: {Response.Content}");
@@ -1346,7 +1348,7 @@ namespace Square9APIHelperLibrary
         /// <param name="inboxId">Inbox ID of the source inbox</param>
         /// <param name="file"><see cref="File"/></param>
         /// <param name="fields">Optional: <see cref="FileField"/></param>
-        public async Task IndexInboxDocumentAsync(int databaseId, int archiveId, int inboxId, File file, List<FileField> fields = null)
+        public async Task IndexInboxDocumentAsync(int databaseId, int archiveId, int inboxId, File file, List<FileField> fields = null, System.Threading.CancellationToken cancellationToken = default)
         {
             DocDetails details = await GetInboxDocumentDetailsAsync(inboxId, file);
 
@@ -1367,7 +1369,7 @@ namespace Square9APIHelperLibrary
         /// <param name="savePath">Optional: Path to save Zip file to</param>
         /// <returns><see cref="string"/> containing the local path of the downloaded zip file</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<string> ExportDocumentAsync(int databaseId, int fieldId, List<FileExport> files, string savePath = "")
+        public async Task<string> ExportDocumentAsync(int databaseId, int fieldId, List<FileExport> files, string savePath = "", System.Threading.CancellationToken cancellationToken = default)
         {
             var CreateExportJobRequest = new RestRequest($"api/dbs/{databaseId}/export?alwaysExportZip=true&auditEntry=Document+Exported&field={fieldId}", Method.Post);
             CreateExportJobRequest.AddJsonBody(files);
@@ -1404,10 +1406,10 @@ namespace Square9APIHelperLibrary
         /// <param name="archiveId"><see cref="Archive.Id"/></param>
         /// <param name="document"><see cref="Doc"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteArchiveDocumentAsync(int databaseId, int archiveId, Doc document)
+        public async Task DeleteArchiveDocumentAsync(int databaseId, int archiveId, Doc document, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}/delete?SecureId={document.Hash}");
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable delete document: {Response.Content}");
@@ -1419,10 +1421,10 @@ namespace Square9APIHelperLibrary
         /// <param name="inboxId">The ID of the inbox you would like to delete from</param>
         /// <param name="file"><see cref="File"/> to be deleted</param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteInboxDocumentAsync(int inboxId, File file)
+        public async Task DeleteInboxDocumentAsync(int inboxId, File file, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/inboxes/{inboxId}?FilePath={file.FileName}{file.FileType}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable delete document: {Response.Content}");
@@ -1438,11 +1440,11 @@ namespace Square9APIHelperLibrary
         /// <param name="move"><see cref="bool"/> Flag to perform move operation (Cut/Paste)</param>
         /// <returns><see cref="int"/> Doc ID of the moved/copied document</returns>
         /// <exception cref="Exception"></exception>
-        public async Task<int> TransferArchiveDocumentAsync(int databaseId, int archiveId, int destArchiveId, Doc document, bool move = false)
+        public async Task<int> TransferArchiveDocumentAsync(int databaseId, int archiveId, int destArchiveId, Doc document, bool move = false, System.Threading.CancellationToken cancellationToken = default)
         {
             string type = (move) ? "move" : "copy";
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}/{type}?DestinationArchive={destArchiveId}&SecureID={document.Hash}");
-            var Response = await ApiClient.ExecuteAsync<int>(Request);
+            var Response = await ApiClient.ExecuteAsync<int>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to transfer document: {Response.Content}");
@@ -1458,10 +1460,10 @@ namespace Square9APIHelperLibrary
         /// <param name="move">Optional: When set to true, operation will delete the source file in the source inbox after copy</param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<string> TransferInboxDocumentAsync(int inboxId, int destInboxId, File file, bool move = false)
+        public async Task<string> TransferInboxDocumentAsync(int inboxId, int destInboxId, File file, bool move = false, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/inboxes/{inboxId}?FilePath={file.FileName}{file.FileType}&deleteOriginal={move}&targetInboxId={destInboxId}");
-            var Response = await ApiClient.ExecuteAsync<string>(Request);
+            var Response = await ApiClient.ExecuteAsync<string>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to transfer document: {Response.Content}");
@@ -1476,10 +1478,10 @@ namespace Square9APIHelperLibrary
         /// <param name="documentId"><see cref="Doc.Id"/></param>
         /// <returns><see cref="Revision"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<Revision>> GetDocumentRevisionsAsync(int databaseId, int archiveId, Doc document)
+        public async Task<List<Revision>> GetDocumentRevisionsAsync(int databaseId, int archiveId, Doc document, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/dbs/{databaseId}/archives/{archiveId}/documents/{document.Id}/rev?SecureId={document.Hash}");
-            var Response = await ApiClient.ExecuteAsync<List<Revision>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<Revision>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get document revisions: {Response.Content}");
@@ -1494,10 +1496,10 @@ namespace Square9APIHelperLibrary
         /// <param name="document"><see cref="Doc"/></param>
         /// <returns><see cref="Queue"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<Queue> GetDocumentQueueAsync(int databaseId, int archiveId, Doc document)
+        public async Task<Queue> GetDocumentQueueAsync(int databaseId, int archiveId, Doc document, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/useraction?Database={databaseId}&Archive={archiveId}&Document={document.Id}&SecureId={document.Hash}");
-            var Response = await ApiClient.ExecuteAsync<Queue>(Request);
+            var Response = await ApiClient.ExecuteAsync<Queue>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get document queue: {Response.Content}");
@@ -1512,10 +1514,10 @@ namespace Square9APIHelperLibrary
         /// <param name="document"><see cref="Doc"/></param>
         /// <param name="action"><see cref="DataTypes.Action"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task FireDocumentQueueActionAsync(int databaseId, int archiveId, Doc document, DataTypes.Action action)
+        public async Task FireDocumentQueueActionAsync(int databaseId, int archiveId, Doc document, DataTypes.Action action, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/useraction?Database={databaseId}&Archive={archiveId}&Document={document.Id}&ActionId={action.Key}&SecureId={document.Hash}", Method.Post);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to trigger document action: {Response.Content}");
@@ -1529,10 +1531,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<SecuredGroup>> GetSecuredUsersAndGroupsAsync()
+        public async Task<List<SecuredGroup>> GetSecuredUsersAndGroupsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/userAdmin/secured");
-            var Response = await ApiClient.ExecuteAsync<List<SecuredGroup>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<SecuredGroup>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get secured users and groups: {Response.Content}");
@@ -1544,10 +1546,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<UnsecuredGroup>> GetUnsecuredUsersAndGroupsAsync()
+        public async Task<List<UnsecuredGroup>> GetUnsecuredUsersAndGroupsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/userAdmin/unsecured");
-            var Response = await ApiClient.ExecuteAsync<List<UnsecuredGroup>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<UnsecuredGroup>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get unsecured users and groups: {Response.Content}");
@@ -1559,10 +1561,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="SecurityNode"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<SecurityNode>> GetTreeStructureAsync()
+        public async Task<List<SecurityNode>> GetTreeStructureAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/userAdmin/tree");
-            var Response = await ApiClient.ExecuteAsync<List<SecurityNode>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<SecurityNode>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get server tree view: {Response.Content}");
@@ -1577,10 +1579,10 @@ namespace Square9APIHelperLibrary
         /// <param name="username">Username to return permissions on</param>
         /// <returns><see cref="ArchivePermission"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<ArchivePermission> GetUserArchivePermissionsAsync(int databaseId, int archiveId, string username)
+        public async Task<ArchivePermission> GetUserArchivePermissionsAsync(int databaseId, int archiveId, string username, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/archives?db={databaseId}&archive={archiveId}&username={username}");
-            var Response = await ApiClient.ExecuteAsync<int>(Request);
+            var Response = await ApiClient.ExecuteAsync<int>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get archive permissions: {Response.Content}");
@@ -1594,10 +1596,10 @@ namespace Square9APIHelperLibrary
         /// <param name="username">Username to return permissions on</param>
         /// <returns><see cref="InboxPermission"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<InboxPermission> GetUserInboxPermissionsAsync(int inbox, string username)
+        public async Task<InboxPermission> GetUserInboxPermissionsAsync(int inbox, string username, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/inboxes?inbox={inbox}&username={username}");
-            var Response = await ApiClient.ExecuteAsync<int>(Request);
+            var Response = await ApiClient.ExecuteAsync<int>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get archive permissions: {Response.Content}");
@@ -1611,10 +1613,10 @@ namespace Square9APIHelperLibrary
         /// <param name="username">Username to return search properties of</param>
         /// <returns><see cref="SearchProperties"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<SearchProperties>> GetUserSearchPropertiesAsync(int databaseId, string username)
+        public async Task<List<SearchProperties>> GetUserSearchPropertiesAsync(int databaseId, string username, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/searches?db={databaseId}&username={username}");
-            var Response = await ApiClient.ExecuteAsync<List<SearchProperties>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<SearchProperties>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Cannot get user search properties: {Response.Content}");
@@ -1626,11 +1628,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="archiveSecurity"><see cref="ArchiveSecurity"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task SetArchiveSecurityAsync(ArchiveSecurity archiveSecurity)
+        public async Task SetArchiveSecurityAsync(ArchiveSecurity archiveSecurity, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/archives", Method.Post);
             Request.AddJsonBody(archiveSecurity);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK || !Response.Content.Contains("\"Saved\":1"))
             {
                 throw new Exception($"Unable to save archive security: {Response.Content}");
@@ -1641,11 +1643,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="inboxSecurity"><see cref="InboxSecurity"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task SetInboxSecurityAsync(InboxSecurity inboxSecurity)
+        public async Task SetInboxSecurityAsync(InboxSecurity inboxSecurity, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/inboxes", Method.Post);
             Request.AddJsonBody(inboxSecurity);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to save inbox security: {Response.Content}");
@@ -1656,11 +1658,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="databaseSecurity"><see cref="DatabaseSecurity"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task SetDatabaseSecurityAsync(DatabaseSecurity databaseSecurity)
+        public async Task SetDatabaseSecurityAsync(DatabaseSecurity databaseSecurity, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/databases", Method.Post);
             Request.AddJsonBody(databaseSecurity);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK || !Response.Content.Contains("\"Success\""))
             {
                 throw new Exception($"Unable to save database security: {Response.Content}");
@@ -1671,11 +1673,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="searchSecurity"><see cref="SearchSecurity"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task SetSearchSecurityAsync(SearchSecurity searchSecurity)
+        public async Task SetSearchSecurityAsync(SearchSecurity searchSecurity, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/searches", Method.Post);
             Request.AddJsonBody(searchSecurity);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK || !Response.Content.Contains("\"Success\""))
             {
                 throw new Exception($"Unable to save search security: {Response.Content}");
@@ -1686,11 +1688,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="searchSecurity"><see cref="SearchSecurity"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task SetSearchPropertiesAsync(SearchSecurity searchSecurity)
+        public async Task SetSearchPropertiesAsync(SearchSecurity searchSecurity, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/searchType", Method.Post);
             Request.AddJsonBody(searchSecurity);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to save search properties: {Response.Content}");
@@ -1701,11 +1703,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="newUser"><see cref="User"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task CreateUserAsync(User newUser)
+        public async Task CreateUserAsync(User newUser, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/user?create=", Method.Post);
             Request.AddJsonBody(newUser);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create new user: {Response.Content}");
@@ -1716,10 +1718,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="user"><see cref="User"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteUserAsync(User user)
+        public async Task DeleteUserAsync(User user, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/user?name={user.Name}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to delete user: {Response.Content}");
@@ -1730,11 +1732,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="user"><see cref="User"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task UpdateUserAsync(User user)
+        public async Task UpdateUserAsync(User user, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/user?name={user.Name}", Method.Put);
             Request.AddJsonBody(user);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update user: {Response.Content}");
@@ -1745,11 +1747,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="newGroup"><see cref="Group"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task CreateGroupAsync(Group newGroup)
+        public async Task CreateGroupAsync(Group newGroup, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/group?createGroup=", Method.Post);
             Request.AddJsonBody(newGroup);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to create new group: {Response.Content}");
@@ -1760,10 +1762,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="group"><see cref="Group"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task DeleteGroupAsync(Group group)
+        public async Task DeleteGroupAsync(Group group, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/group?name={group.Name}", Method.Delete);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to delete group: {Response.Content}");
@@ -1774,11 +1776,11 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <param name="group"><see cref="Group"/></param>
         /// <exception cref="Exception"></exception>
-        public async Task UpdateGroupAsync(Group group)
+        public async Task UpdateGroupAsync(Group group, System.Threading.CancellationToken cancellationToken = default)
         {
             var Request = new RestRequest($"api/userAdmin/group?groupName={group.Name}", Method.Put);
             Request.AddJsonBody(group);
-            var Response = await ApiClient.ExecuteAsync(Request);
+            var Response = await ApiClient.ExecuteAsync(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to update group: {Response.Content}");
@@ -1789,10 +1791,10 @@ namespace Square9APIHelperLibrary
         /// </summary>
         /// <returns><see cref="Group"/></returns>
         /// <exception cref="Exception"></exception>
-        public async Task<List<Group>> GetGroupsAsync()
+        public async Task<List<Group>> GetGroupsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var Request = new RestRequest($"api/userAdmin/s9groups");
-            var Response = await ApiClient.ExecuteAsync<List<Group>>(Request);
+            var Response = await ApiClient.ExecuteAsync<List<Group>>(Request, cancellationToken);
             if (Response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"Unable to get groups: {Response.Content}");
