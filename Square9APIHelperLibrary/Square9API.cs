@@ -45,6 +45,16 @@ namespace Square9APIHelperLibrary
             };
         }
 
+        /// <remarks>
+        /// This constructor is intended to be passed in the HttpClient
+        /// returned by the Square9.CustomNode.CustomNode.GetSquare9ApiClient
+        /// method.
+        /// </remarks>
+        public Square9API(HttpClient httpClient)
+        {
+            ApiClient = new RestClient(httpClient);
+        }
+
         /// <summary>
         /// Checks if the current authenticated user is an Administrator
         /// </summary>
