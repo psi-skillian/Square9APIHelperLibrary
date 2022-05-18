@@ -1803,5 +1803,13 @@ namespace Square9APIHelperLibrary
         }
         #endregion
 
+        public void Dispose()
+        {
+            if (ApiClient is null)
+                return;
+
+            ApiClient.Dispose();
+            ApiClient = null;
+        }
     }
 }
